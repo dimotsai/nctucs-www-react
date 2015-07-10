@@ -12,10 +12,10 @@ var MessageList = React.createClass({
     },
 
     render: function() {
-        var message = this.props.messages.reverse().map(function(data,index){
+        var message = this.props.messages.map(function(data,index){
             return <Message key={index}
                             avator={data.avator}
-                            username={data.username}
+                            username={data.name}
                             message={data.message} />
         });
         return (

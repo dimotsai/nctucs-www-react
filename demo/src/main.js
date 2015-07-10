@@ -19,9 +19,25 @@ var main = React.createClass({
     mixins: [ReactFireMixin],
 
     componentDidMount: function() {
-        this.bindAsArray(
-            new Firebase("https://react-example.firebaseio.com/messages").orderByKey(),
-            "messages");
+        //this.bindAsArray(
+            //new Firebase("https://react-example.firebaseio.com/messages").orderByKey(),
+            //"messages");
+
+        var getMessages = function() {
+            $.ajax({
+                url: 'http://sslab2.cs.nctu.edu.tw/myproject/api/v1/messages?order=desc&limit=1000',
+                dataType: 'json',
+                success: function(data) {
+                    this.setState({
+                        messages: data.data
+                    });
+                }.bind(this)
+            });
+        }.bind(this);
+
+        getMessages();
+
+        setInterval(getMessages, 2000);
 
         $.ajax({
           url: 'http://api.randomuser.me/',
@@ -49,10 +65,28 @@ var main = React.createClass({
             return false;
         }
 
-        this.firebaseRefs["messages"].push({
-            avator: this.state.user.avator,
-            username: username,
-            message: messageDOM.value.trim()
+        //this.firebaseRefs["messages"].push({
+            //avator: this.state.user.avator,
+            //username: username,
+            //message: messageDOM.value.trim()
+        //});
+
+        $.ajax({
+            url: 'http://sslab2.cs.nctu.edu.tw/myproject/api/v1/messages',
+            method: 'POST',
+            dataType: 'json',
+            success: function(data) {
+                var messages = this.state.messages;
+                messages.unshift(data.data);
+                this.setState({
+                    messages: messages
+                });
+            }.bind(this),
+            data: {
+                avator: this.state.user.avator,
+                name: username,
+                message: messageDOM.value.trim()
+            }
         });
 
         this.setState({
